@@ -597,16 +597,24 @@ open class PulleyViewController: UIViewController {
     }
     
     /**
-     Change the current drawer content view controller (The one inside the drawer)
+     Change the current drawer content view controller. (The one inside the drawer)
      
-     - parameter controller: The controller to replace it with
-     - parameter animated:   Whether or not to animate the change.
+     - parameter controller: The controller to replace it with.
+     - parameter animated:  Whether or not to animate the change.
+     - parameter transition: The transition type to apply.  If none is set, the default `.transitionCrossDissolve` will be used.
      */
-    public func setDrawerContentViewController(controller: UIViewController, animated: Bool = true)
+    public func setDrawerContentViewController(controller: UIViewController, animated: Bool = true, transition: UIViewAnimationOptions? = nil)
     {
-        if animated
+        if animated && (transition == nil)
         {
             UIView.transition(with: drawerContentContainer, duration: 0.5, options: UIViewAnimationOptions.transitionCrossDissolve, animations: { [weak self] () -> Void in
+                
+                self?.drawerContentViewController = controller
+                self?.setDrawerPosition(position: self?.drawerPosition ?? .collapsed, animated: false)
+                
+                }, completion: nil)
+        } else if animated && transition != nil {
+            UIView.transition(with: drawerContentContainer, duration: 0.5, options: transition! , animations: { [weak self] () -> Void in
                 
                 self?.drawerContentViewController = controller
                 self?.setDrawerPosition(position: self?.drawerPosition ?? .collapsed, animated: false)
@@ -744,10 +752,10 @@ extension PulleyViewController: UIScrollViewDelegate {
                 }
             }
             
-            if abs(Float(currentClosestStop - (self.view.bounds.size.height - topInset))) <= FLT_EPSILON && supportedDrawerPositions.contains(.open)
+            if abs(Float(currentClosestStop - (self.view.bounds.size.height - topInset))) <= Float.ulpOfOne && supportedDrawerPositions.contains(.open)
             {
                 setDrawerPosition(position: .open, animated: true)
-            } else if abs(Float(currentClosestStop - collapsedHeight)) <= FLT_EPSILON && supportedDrawerPositions.contains(.collapsed)
+            } else if abs(Float(currentClosestStop - collapsedHeight)) <= Float.ulpOfOne && supportedDrawerPositions.contains(.collapsed)
             {
                 setDrawerPosition(position: .collapsed, animated: true)
             } else if supportedDrawerPositions.contains(.partiallyRevealed){
