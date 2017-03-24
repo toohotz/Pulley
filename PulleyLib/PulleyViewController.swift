@@ -202,6 +202,9 @@ open class PulleyViewController: UIViewController {
         }
     }
     
+    /// The width of the drawer view controller. The default is **1** which allows the drawer content view controller to take up the full width.  This allows for a different layout experience for an iPad for example.
+   @IBInspectable public var drawerViewWidth: CGFloat = 1
+    
     /// The inset from the top of the view controller when fully open.
     @IBInspectable public var topInset: CGFloat = 50.0 {
         didSet {
@@ -459,17 +462,18 @@ open class PulleyViewController: UIViewController {
         
         let lowestStop = [(self.view.bounds.size.height - topInset), collapsedHeight, partialRevealHeight].min() ?? 0
         let bounceOverflowMargin: CGFloat = 20.0
+        let width = self.view.bounds.width * drawerViewWidth
         
         if supportedDrawerPositions.contains(.open)
         {
             // Layout scrollview
-            drawerScrollView.frame = CGRect(x: 0, y: topInset, width: self.view.bounds.width, height: self.view.bounds.height - topInset)
+            drawerScrollView.frame = CGRect(x: 0, y: topInset, width: width, height: self.view.bounds.height - topInset)
         }
         else
         {
             // Layout scrollview
             let adjustedTopInset: CGFloat = supportedDrawerPositions.contains(.partiallyRevealed) ? partialRevealHeight : collapsedHeight
-            drawerScrollView.frame = CGRect(x: 0, y: self.view.bounds.height - adjustedTopInset, width: self.view.bounds.width, height: adjustedTopInset)
+            drawerScrollView.frame = CGRect(x: 0, y: self.view.bounds.height - adjustedTopInset, width: width, height: adjustedTopInset)
         }
         
         drawerContentContainer.frame = CGRect(x: 0, y: drawerScrollView.bounds.height - lowestStop, width: drawerScrollView.bounds.width, height: drawerScrollView.bounds.height + bounceOverflowMargin)
