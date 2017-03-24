@@ -80,7 +80,13 @@ extension DrawerContentViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableView.dequeueReusableCell(withIdentifier: "SampleCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SampleCell", for: indexPath)
+        if #available(iOS 10.0, *) {
+            cell.contentView.backgroundColor = .clear
+        } else {
+            cell.backgroundColor = .clear
+        }
+        return cell
     }
 }
 
